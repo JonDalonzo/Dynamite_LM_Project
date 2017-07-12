@@ -1,4 +1,5 @@
 /*
+ * Test: did this get pushed?
  * Created by Jon D'Alonzo
  */
 package dynamite;
@@ -21,25 +22,35 @@ public class DynamiteGUI {
     
     double[] robotYData;
     double[] canyonYData;
+    double[] sensorData;
     final int MAXDISTANCE = 100;
     
     
     public DynamiteGUI() {
-        canyonYData = null;
+        canyonYData = new double[MAXDISTANCE];
         robotYData = null;
+        sensorData = null;
     }
     
     public void setRobotYData(double[] data) {
         robotYData = data;
     }
-      
-    public double[] calculateCanyonYData(double[] sensorRead) {
-      
-        double[] data = fillArrayWithRand(100, 1);
+    
+    public void setSensorData(double[] data) {
+        sensorData = data;
+    }
+    
+    /**
+     * The reason why the y data of the robot is being subtracted to the sensor data is because
+     * the canyon wall will be on the right of the robot
+     * @param sensorData
+     * @return 
+     */
+    public void calculateCanyonYData() {
         
-
-
-        return data;
+        for (int i = 0; i < MAXDISTANCE; i++) {
+            canyonYData[i] = robotYData[i] - sensorData[i];
+        }
     }
     
     public double[] fillArrayWithRand(double max, double min) {
@@ -67,22 +78,17 @@ public class DynamiteGUI {
 
         // Series
         // @formatter:off
-        double[] xAges = new double[] { 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87,
-            88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100 };
-
-        double[] yLiability = new double[] { 672234, 691729, 711789, 732431, 753671, 775528, 798018, 821160, 844974, 869478, 907735, 887139, 865486,
-            843023, 819621, 795398, 770426, 744749, 719011, 693176, 667342, 641609, 616078, 590846, 565385, 540002, 514620, 489380, 465149, 441817,
-            419513, 398465, 377991, 358784, 340920, 323724, 308114, 293097, 279356, 267008, 254873 };
-        double[] yPercentile75th = new double[] { 800000, 878736, 945583, 1004209, 1083964, 1156332, 1248041, 1340801, 1440138, 1550005, 1647728,
-            1705046, 1705032, 1710672, 1700847, 1683418, 1686522, 1674901, 1680456, 1679164, 1668514, 1672860, 1673988, 1646597, 1641842, 1653758,
-            1636317, 1620725, 1589985, 1586451, 1559507, 1544234, 1529700, 1507496, 1474907, 1422169, 1415079, 1346929, 1311689, 1256114, 1221034 };
+        double[] xDistance = new double[MAXDISTANCE]; 
+        for (int index = 1; index < MAXDISTANCE+1; index++) {
+            xDistance[index-1] = index;
+        }
+        
         // @formatter:on
-
-        XYSeries seriesLiability = chart.addSeries("Liability", xAges, yLiability);
+        XYSeries seriesLiability = chart.addSeries("Liability", xDistance, canyonYData);
         seriesLiability.setXYSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Area);
         seriesLiability.setMarker(SeriesMarkers.NONE);
 
-        chart.addSeries("75th Percentile", xAges, yPercentile75th);
+        chart.addSeries("75th Percentile", xDistance, robotYData);
 
         return chart;
     }
