@@ -25,13 +25,12 @@ public class Driver {
             //2. Store them in the gui
         gui.setRobotYData(simData);
             //3. Get simulated sensor projection data
-        double[] simData2 = gui.fillArrayWithRand(20, 1);
-            //
-        gui.calculateCanyonYData(simData2);
+        double[] simData2 = gui.fillArrayWithRand(50, 1);
+            //4. Store sensor data
+        gui.setSensorData(simData2);
+            //5. Calculate the y data of the canyon wall with current data
+        gui.calculateCanyonYData();
         
-        
-        
-
         // Create Chart
         XYChart chart = gui.getChart();
         // Show it
