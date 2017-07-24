@@ -13,3 +13,6 @@ Sample code in Java to read and write data using Pi4J through a serial port: htt
                                               
 Disable Serial Port Terminal Shell Output on the Raspbian/Raspberry Pi since by default Raspberry PI Raspbian OS is using serial port as console terminal port: https://www.cube-controls.com/2015/11/02/disable-serial-port-terminal-output-on-raspbian/
 ----------------------------------------------------------------------------------------------------------------------
+
+IMPORTANT:::::
+https://raspberrypi.stackexchange.com/questions/37920/how-do-i-set-up-networking-wifi-static-ip-address
