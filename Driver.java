@@ -12,14 +12,28 @@ import org.knowm.xchart.XYChart;
  * @author e356227
  */
 public class Driver {
-      
-    public static void main(String[] args) throws Exception {
-
-//        Random rand = new Random(); 
-//        double[][] initdata = new double[0][0];
-        
-        DynamiteGUI gui = new DynamiteGUI();
-        test(gui);
+    
+    final int TIME_INTERVAL = 100; //This is how many times during 5 minutes the robot was pinged for data
+    double[] robotX = new double[TIME_INTERVAL];
+    double[] yValues = new double[TIME_INTERVAL];
+    double[] canyonX = new double[TIME_INTERVAL];
+    DynamiteGUI gui = null;
+    SerialComm sc = null;
+    SerialComm2 sc2 = null;
+    Calculator calculator = null;
+    Driver driver = null;
+    
+    public Driver() throws Exception {
+        gui = new DynamiteGUI();
+        sc = new SerialComm();
+        sc2 = new SerialComm2();
+        calculator = new Calculator();
+        driver = new Driver();
+        //test(gui);
+    }
+    
+    public void createChart() {
+        gui.setYValues(yValues);
         // Create Chart
         XYChart chart = gui.getChart();
         // Show it
@@ -27,12 +41,12 @@ public class Driver {
         sw.displayChart();
     }
     
-    public static void test(DynamiteGUI gui) {
+    public void test(DynamiteGUI gui) {
         //PROCESS
             //1. Get simulated random robot y values
         double[] simData = fillArrayWithRand(gui, 100, 1);
             //2. Store them in the gui
-        gui.setRobotYData(simData);
+        gui.setYValues(simData);
             //3. Get simulated sensor projection data
         double[] simData2 = fillArrayWithRand(gui, 50, 1);
             //4. Store sensor data
@@ -44,8 +58,8 @@ public class Driver {
             System.out.println("Exception thrown: calculateCanyonYData, " + e.getMessage());
         }
     }
-
-    public static double[] fillArrayWithRand(DynamiteGUI gui, double max, double min) {
+    
+    public double[] fillArrayWithRand(DynamiteGUI gui, double max, double min) {
         Random rand = new Random();
         double[] randValues = new double[gui.MAXDISTANCE];
         for (int i = 0; i < gui.MAXDISTANCE; i++) {
@@ -53,23 +67,28 @@ public class Driver {
         }
         return randValues;
     }
-
+    
+    
+    
+    
+    
+    public static void main(String[] args) {
+        
+        Driver driver;
+        try {
+            driver = new Driver();
+            while (true) {
+                    //read in data
+//                byte[] scData = sc.readFromSerialPort();
+//                char[] sc2Data = sc2.readFromSerialPort();
+                    //process data
+                    //perform calculations
+                //calculator.processData(0, 0, 0);
+                    //plot data
+                driver.createChart();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
-
-
-        // This section of code will constantly pull the data to plot it...
-
-//        while (true) {  
-//            Thread.sleep(100);
-//            //update the data collected here...
-//            double[] xData = getSimulatedData(rand);
-//            javax.swing.SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-////                chart.updateXYSeries("sine", data[0], data[1], null);
-//                sw.repaintChart();
-//            }
-//            });
-//        }
-
-//return new double[][] { xData, yData };
