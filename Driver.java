@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Created by Jon D'Alonzo
  */
 package dynamite;
 
@@ -70,6 +68,7 @@ public class Driver {
     
     
     
+    
     public static void main(String[] args) {
         
         Driver driver;
@@ -80,19 +79,9 @@ public class Driver {
 //                byte[] scData = sc.readFromSerialPort();
 //                char[] sc2Data = sc2.readFromSerialPort();
                     //process data
-                    processor.processFile;
                     //perform calculations
                 //calculator.processData(0, 0, 0);
                     //plot data
-                    
-                    
-                    //find distance travelled
-                    double distance = calculator.findDistanceTravelled(Double.parseDouble(data[0]), Double.parseDouble(data[1])); 
-                    //find the change in y
-                    double theta = Double.parseDouble(data[2]);
-                    calculator.changeInY(distance, theta);
-                    //find the change in x
-                    calculator.changeInX(distance, theta);
                 driver.createChart();
             }
         } catch (Exception e) {
