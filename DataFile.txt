@@ -1,0 +1,14 @@
+left motor, right motor, z axis angle, sonic sensor
+
+will be adding a variable at the beginning of whether to keep running or not for python script....
+	file.write(data_raw);
+-0.00, 0.00, -0.02, 6.26, 
+-0.00, 0.00, 0.00, 15.07, 
+-0.00, 0.00, -0.01, 18.83, 
+-0.00, 0.00, -0.00, 5.41, 
+-0.00, 0.00, -0.00, 22.47, 
+-0.00, 0.00, 0.00, 17.74, 
+-0.00, 0.00, 0.00, 5.07, 
+-0.00, 0.00, -0.01, 9.98, 
+-0.00, 0.00, -0.01, 18.95, 
+-0.00, 0.00, -0.01, 35.69, 
