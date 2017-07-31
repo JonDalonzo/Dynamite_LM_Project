@@ -1,5 +1,7 @@
 /*
- * Created by Jon D'Alonzo
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package dynamite;
 
@@ -18,15 +20,11 @@ public class Driver {
     double[] yValues = new double[TIME_INTERVAL];
     double[] canyonX = new double[TIME_INTERVAL];
     DynamiteGUI gui = null;
-    SerialComm sc = null;
-    SerialComm2 sc2 = null;
     Calculator calculator = null;
     Driver driver = null;
     
     public Driver() throws Exception {
         gui = new DynamiteGUI();
-        sc = new SerialComm();
-        sc2 = new SerialComm2();
         calculator = new Calculator();
         driver = new Driver();
         //test(gui);
@@ -82,9 +80,19 @@ public class Driver {
 //                byte[] scData = sc.readFromSerialPort();
 //                char[] sc2Data = sc2.readFromSerialPort();
                     //process data
+                    processor.processFile;
                     //perform calculations
                 //calculator.processData(0, 0, 0);
                     //plot data
+                    
+                    
+                    //find distance travelled
+                    double distance = calculator.findDistanceTravelled(Double.parseDouble(data[0]), Double.parseDouble(data[1])); 
+                    //find the change in y
+                    double theta = Double.parseDouble(data[2]);
+                    calculator.changeInY(distance, theta);
+                    //find the change in x
+                    calculator.changeInX(distance, theta);
                 driver.createChart();
             }
         } catch (Exception e) {
