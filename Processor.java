@@ -31,6 +31,7 @@ public class Processor {
         double[] distTravelled;
         double[] changeInY;
         double[] changeInX;
+        String[] lineArray;
         String[] data;
         String line = "START OF FILE";
         boolean run = true;
@@ -45,28 +46,34 @@ public class Processor {
                     run = false;
                 }
                 else {
-                    data = new String[4]; //should be 4 due to only reading in 4 components of data
-                    data = line.split(", ");
-                    //separate data
-                    separateData(data);
-                    //set the amount of times data was taken during the journey
-                    driver.setMaxDataReadings(leftMotor.length);
-                    //calculate the distance travelled from previous data retrieval
-                    distTravelled = calc.findDistanceTravelled(leftMotor, rightMotor);
-                    //calculate the change in y from previous data retrieval 
-                    changeInY = calc.changeInY(distTravelled, zAxis, sonicDistance[0]);
-                    //calculate the change in x from previous data retrieval
-                    changeInX = calc.changeInX(distTravelled, zAxis);
-                    //calculate the new y coordinates and then set them
-                    double[] robotY = calc.findNewCoordinates(changeInY);
-                    driver.setRobotY(robotY);
-                    //calculate the new x coordinates and then store them
-                    driver.setXValues(calc.findNewCoordinates(changeInX));
-                    //calculate the canyons y values then store them
-                    driver.setCanyonY(calc.calculateCanyonYData(robotY, sonicDistance, driver.getMaxDataReadings()));
+                    lineArray = line.split(", ");
+                    int j = 0;
+                    for (int i = data.length; i < lineArray.length; i++) {
+                        data[i] = lineArray[j];
+                        j++;
+                    }
                 }
             } while (line != null && run);
             
+            if (data.length != 0 || data == null) {
+                //separate data
+                separateData(data);
+                //set the amount of times data was taken during the journey
+                driver.setMaxDataReadings(leftMotor.length);
+                //calculate the distance travelled from previous data retrieval
+                distTravelled = calc.findDistanceTravelled(leftMotor, rightMotor);
+                //calculate the change in y from previous data retrieval 
+                changeInY = calc.changeInY(distTravelled, zAxis, sonicDistance[0]);
+                //calculate the change in x from previous data retrieval
+                changeInX = calc.changeInX(distTravelled, zAxis);
+                //calculate the new y coordinates and then set them
+                double[] robotY = calc.findNewCoordinates(changeInY);
+                driver.setRobotY(robotY);
+                //calculate the new x coordinates and then store them
+                driver.setXValues(calc.findNewCoordinates(changeInX));
+                //calculate the canyons y values then store them
+                driver.setCanyonY(calc.calculateCanyonYData(robotY, sonicDistance, driver.getMaxDataReadings()));
+            }
             
             fr.close();
             textReader.close();
