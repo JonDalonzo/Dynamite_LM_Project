@@ -19,47 +19,12 @@ import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
  *
  * @author e356227
  */
-public class DynamiteGUI {
-     
-    double[] missileYData; // y data of the missile track retrieved by the robot
-    double[] canyonYData; // y data of the canyon
-    double[] sensorData; // list of distances retrieved at each ping location
-    final int MAXDISTANCE = 100; // the max x distance of enviornment
+public class GUIComponent {
     
-    
-    public DynamiteGUI() {
-        canyonYData = new double[MAXDISTANCE];
-        missileYData = new double[MAXDISTANCE];
-        sensorData = new double[MAXDISTANCE];
-    }
-    
-    public void setYValues(double[] data) {
-        missileYData = data;
-    }
-    
-    public void setSensorData(double[] data) {
-        sensorData = data;
-    }
-    
-    /**
-     * The reason why the sensor data is being subtracted from the robot's y data
-     * is because the canyon wall will be on the right of the robot.
-     * @param sensorData
-     * @return 
-     */
-    public void calculateCanyonYData() throws Exception {
-        
-        if (missileYData == null || sensorData == null) {
-            throw new Exception();
-        }
-        else {
-            for (int i = 0; i < MAXDISTANCE; i++) {
-                canyonYData[i] = missileYData[i] - sensorData[i];
-            }
-        }
-    }
    
-    public XYChart getChart() {
+    
+    
+    public XYChart getChart(double[] canyonX, double[] robotX, int maxDataReadings) {
 
         // Create Chart
         XYChart chart = new XYChartBuilder().width(800).height(600).title(getClass().getSimpleName()).xAxisTitle("").yAxisTitle("").build();
@@ -74,19 +39,19 @@ public class DynamiteGUI {
 
         // Series
         // @formatter:off
-        double[] xDistance = new double[MAXDISTANCE]; 
-        for (int index = 1; index < MAXDISTANCE+1; index++) {
+        double[] xDistance = new double[maxDataReadings]; 
+        for (int index = 1; index < maxDataReadings+1; index++) {
             xDistance[index-1] = index;
         }
         
         // @formatter:on
-        XYSeries seriesLiability = chart.addSeries("Canyon Wall", xDistance, canyonYData);
+        XYSeries seriesLiability = chart.addSeries("Canyon Wall", xDistance, canyonX);
         seriesLiability.setFillColor(Color.orange);
         seriesLiability.setLineColor(Color.orange);
         seriesLiability.setXYSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Area);
         seriesLiability.setMarker(SeriesMarkers.NONE);
 
-        chart.addSeries("Missile Track", xDistance, missileYData).setLineColor(Color.black);
+        chart.addSeries("Missile Track", xDistance, robotX).setLineColor(Color.black);
 
         return chart;
     }
