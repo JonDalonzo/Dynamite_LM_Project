@@ -13,55 +13,96 @@ import org.knowm.xchart.XYChart;
  */
 public class Driver {
     
-    final int TIME_INTERVAL = 100; //This is how many times during 5 minutes the robot was pinged for data
-    double[] robotX = new double[TIME_INTERVAL];
-    double[] yValues = new double[TIME_INTERVAL];
-    double[] canyonX = new double[TIME_INTERVAL];
-    DynamiteGUI gui = null;
-    Calculator calculator = null;
-    Driver driver = null;
+    private int maxDataReadings = 100; //This is how many times during 5 minutes the robot was pinged for data
+    private double[] robotY; // list of distances retrieved at each data retrieval location
+    private double[] xValues; // y data of the missile track retrieved by the robot
+    private double[] canyonY; // x data of the canyon
+    private GUIComponent gui = null;
+    private Calculator calculator = null;
+    private Driver driver = null;
+    private Processor processor;
     
-    public Driver() throws Exception {
-        gui = new DynamiteGUI();
+    public void initDriver() {
+        robotY = new double[maxDataReadings];
+        xValues = new double[maxDataReadings];
+        canyonY = new double[maxDataReadings];
+        gui = new GUIComponent();
         calculator = new Calculator();
-        driver = new Driver();
-        //test(gui);
     }
     
+    public void setMaxDataReadings(int maxDataReadings) {
+        this.maxDataReadings = maxDataReadings;
+    }
+    
+    public void setRobotY(double[] robotY) {
+        this.robotY = robotY;
+    }
+    
+    public void setXValues(double[] xValues) {
+        this.xValues = xValues;
+    }
+    
+    public void setCanyonY(double[] canyonY) {
+        this.canyonY = canyonY;
+    }
+    
+    
     public void createChart() {
-        gui.setYValues(yValues);
         // Create Chart
-        XYChart chart = gui.getChart();
+        XYChart chart = gui.getChart(canyonY, robotY, maxDataReadings);
         // Show it
         final SwingWrapper<XYChart> sw = new SwingWrapper<XYChart>(chart);
         sw.displayChart();
     }
     
-    public void test(DynamiteGUI gui) {
-        //PROCESS
-            //1. Get simulated random robot y values
-        double[] simData = fillArrayWithRand(gui, 100, 1);
-            //2. Store them in the gui
-        gui.setYValues(simData);
-            //3. Get simulated sensor projection data
-        double[] simData2 = fillArrayWithRand(gui, 50, 1);
-            //4. Store sensor data
-        gui.setSensorData(simData2);
-            //5. Calculate the y data of the canyon wall with current data
+    public void run() {
         try {
-            gui.calculateCanyonYData();
+            while (true) {
+                    //read in/process data
+                processor.processFile("DataFile.txt", this);
+                initDriver();
+                
+                    //perform calculations
+                //calculator.processData(0, 0, 0);
+                    //plot data
+                createChart();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    public void test(GUIComponent gui) {
+        //PROCESS
+        try {
+        //1. Get simulated random robot y values
+        double[] simRobotY = fillArrayWithRand(gui, 100, 1);
+            //2. Store them in the gui
+        setRobotY(simRobotY);
+            //3. Get simulated sensor projection data
+        double[] simSensorData = fillArrayWithRand(gui, 50, 1);
+            //5. Calculate the y data of the canyon wall with current data
+        setCanyonY(calculator.calculateCanyonYData(xValues, simSensorData, maxDataReadings));
+            //6. Fill x values with a time interval
+        for (int i = 0; i < maxDataReadings; i++) {
+           xValues[i] = i;
+        }
         } catch (Exception e) {
             System.out.println("Exception thrown: calculateCanyonYData, " + e.getMessage());
         }
     }
     
-    public double[] fillArrayWithRand(DynamiteGUI gui, double max, double min) {
+    public double[] fillArrayWithRand(GUIComponent gui, double max, double min) {
         Random rand = new Random();
-        double[] randValues = new double[gui.MAXDISTANCE];
-        for (int i = 0; i < gui.MAXDISTANCE; i++) {
+        double[] randValues = new double[maxDataReadings];
+        for (int i = 0; i < maxDataReadings; i++) {
             randValues[i] = min + (max - min) * rand.nextDouble(); // gets random value between 1 and 100
         }
         return randValues;
+    }
+    
+    public int getMaxDataReadings() {
+        return maxDataReadings;
     }
     
     
@@ -71,21 +112,11 @@ public class Driver {
     
     public static void main(String[] args) {
         
-        Driver driver;
-        try {
-            driver = new Driver();
-            while (true) {
-                    //read in data
-//                byte[] scData = sc.readFromSerialPort();
-//                char[] sc2Data = sc2.readFromSerialPort();
-                    //process data
-                    //perform calculations
-                //calculator.processData(0, 0, 0);
-                    //plot data
-                driver.createChart();
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        GUIComponent gui = new GUIComponent();;
+        Calculator calculator = new Calculator();
+        Driver driver = new Driver();
+        Processor processor = new Processor();
+        //test(gui);
+        driver.run();
     }
 }
