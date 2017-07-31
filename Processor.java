@@ -14,31 +14,31 @@ import java.io.FileReader;
  */
 public class Processor {
     
-    double[] leftMotor;
-    double[] rightMotor;
-    double[] zAxis;
-    double[] sonicDistance;
+    private double[] leftMotor;
+    private double[] rightMotor;
+    private double[] zAxis;
+    private double[] sonicDistance;
+    private Calculator calc = new Calculator();
     
     
     /**
-     * Will return an array of data that in such form:
-     * double results:
-     * [0] - change in y value
-     * [1] - change in x value
-     * [2] - sensor distance
+     * Will process the whole data file at once...
      * @param filePath
      * @return 
      */
-    public double[] processFile(String filePath) {
+    public void processFile(String filePath, Driver driver) {
+        
+        double[] distTravelled;
+        double[] changeInY;
+        double[] changeInX;
+        String[] data;
+        String line = "START OF FILE";
+        boolean run = true;
         
         try {
             FileReader fr = new FileReader(filePath);
             BufferedReader textReader = new BufferedReader(fr);
             
-            String[] data;
-            double[] results; //[0]-change in y, [1]-change in x, [2]-sensor data
-            String line = "START OF FILE";
-            boolean run = true;
             do {
                 line = textReader.readLine();
                 if (line.contains("done") || line == "") {
@@ -49,7 +49,21 @@ public class Processor {
                     data = line.split(", ");
                     //separate data
                     separateData(data);
-                    
+                    //set the amount of times data was taken during the journey
+                    driver.setMaxDataReadings(leftMotor.length);
+                    //calculate the distance travelled from previous data retrieval
+                    distTravelled = calc.findDistanceTravelled(leftMotor, rightMotor);
+                    //calculate the change in y from previous data retrieval 
+                    changeInY = calc.changeInY(distTravelled, zAxis, sonicDistance[0]);
+                    //calculate the change in x from previous data retrieval
+                    changeInX = calc.changeInX(distTravelled, zAxis);
+                    //calculate the new y coordinates and then set them
+                    double[] robotY = calc.findNewCoordinates(changeInY);
+                    driver.setRobotY(robotY);
+                    //calculate the new x coordinates and then store them
+                    driver.setXValues(calc.findNewCoordinates(changeInX));
+                    //calculate the canyons y values then store them
+                    driver.setCanyonY(calc.calculateCanyonYData(robotY, sonicDistance, driver.getMaxDataReadings()));
                 }
             } while (line != null && run);
             
@@ -60,18 +74,28 @@ public class Processor {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return null;
     }
     
     private void separateData(String[] data) {
         
         int j = 0;
-        for (int i = 0; i < data.length; i++) {
-            leftMotor[j] = Double.parseDouble(data[i]);
-            rightMotor[j] = Double.parseDouble(data[++i]);
-            zAxis[j] = Double.parseDouble(data[++i]);
-            sonicDistance[j] = Double.parseDouble(data[++i]);
-            j++;
+        boolean run = true;
+        for (int i = 0; i < data.length || run; i++) {
+            String dataLine = data[i] + data[i+1] + data[i+2] + data[i+3];
+            if (dataLine.contains("done")) {
+                run = false;
+            }
+            else {
+                leftMotor[j] = Double.parseDouble(data[i]);
+                rightMotor[j] = Double.parseDouble(data[++i]);
+                zAxis[j] = Double.parseDouble(data[++i]);
+                sonicDistance[j] = Double.parseDouble(data[++i]);
+                j++;
+            }
         }
+    }
+    
+    public void findRobotYData() {
+        
     }
 }
