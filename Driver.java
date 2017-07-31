@@ -20,7 +20,7 @@ public class Driver {
     private GUIComponent gui = null;
     private Calculator calculator = null;
     private Driver driver = null;
-    private Processor processor;
+    private Processor processor = new Processor();
     
     public void initDriver() {
         robotY = new double[maxDataReadings];
@@ -57,16 +57,29 @@ public class Driver {
     
     public void run() {
         try {
-            while (true) {
-                    //read in/process data
-                processor.processFile("DataFile.txt", this);
-                initDriver();
-                
-                    //perform calculations
-                //calculator.processData(0, 0, 0);
-                    //plot data
-                createChart();
-            }
+                //read in/process data
+            processor.processFile("DataFile.txt", this);
+            initDriver();
+
+                //perform calculations
+            //calculator.processData(0, 0, 0);
+                //plot data
+            createChart();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    public void test2() {
+        try {
+                //read in/process data
+            processor.processFile("C:\\Users\\e356227\\Desktop\\TestDataFile.txt", this);
+            initDriver();
+
+                //perform calculations
+            //calculator.processData(0, 0, 0);
+                //plot data
+            createChart();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -112,11 +125,8 @@ public class Driver {
     
     public static void main(String[] args) {
         
-        GUIComponent gui = new GUIComponent();;
-        Calculator calculator = new Calculator();
         Driver driver = new Driver();
-        Processor processor = new Processor();
         //test(gui);
-        driver.run();
+        driver.test2();
     }
 }
