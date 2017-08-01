@@ -24,7 +24,7 @@ public class GUIComponent {
    
     
     
-    public XYChart getChart(double[] canyonX, double[] robotX, int maxDataReadings) {
+    public XYChart getChart(double[] canyonY, double[] robotY, double[] xValues, int maxDataReadings) {
 
         // Create Chart
         XYChart chart = new XYChartBuilder().width(800).height(600).title(getClass().getSimpleName()).xAxisTitle("").yAxisTitle("").build();
@@ -33,25 +33,21 @@ public class GUIComponent {
         chart.getStyler().setLegendPosition(LegendPosition.InsideNW);
         chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
         chart.getStyler().setYAxisLabelAlignment(Styler.TextAlignment.Right);
-        chart.getStyler().setYAxisDecimalPattern("## in");
+        chart.getStyler().setYAxisDecimalPattern("## cm");
         chart.getStyler().setPlotMargin(0);
         chart.getStyler().setPlotContentSize(.95);
 
         // Series
         // @formatter:off
-        double[] xDistance = new double[maxDataReadings]; 
-        for (int index = 1; index < maxDataReadings+1; index++) {
-            xDistance[index-1] = index;
-        }
         
         // @formatter:on
-        XYSeries seriesLiability = chart.addSeries("Canyon Wall", xDistance, canyonX);
+        XYSeries seriesLiability = chart.addSeries("Canyon Wall", xValues, canyonY);
         seriesLiability.setFillColor(Color.orange);
         seriesLiability.setLineColor(Color.orange);
         seriesLiability.setXYSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Area);
         seriesLiability.setMarker(SeriesMarkers.NONE);
 
-        chart.addSeries("Missile Track", xDistance, robotX).setLineColor(Color.black);
+        chart.addSeries("Missile Track", xValues, robotY).setLineColor(Color.black);
 
         return chart;
     }
