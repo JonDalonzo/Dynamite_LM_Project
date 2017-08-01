@@ -2,7 +2,6 @@
  * Test: did this get pushed?
  * Created by Jon D'Alonzo
  */
-package dynamite;
 
 import java.awt.Color;
 import java.util.Random;
@@ -19,7 +18,7 @@ import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
  *
  * @author e356227
  */
-public class GUIComponent {
+public class DynamiteGUI {
     
    
     
