@@ -17,21 +17,25 @@ public class Driver {
     private double[] robotY; // list of distances retrieved at each data retrieval location
     private double[] xValues; // y data of the missile track retrieved by the robot
     private double[] canyonY; // x data of the canyon
+    private double min; //min of graph
+    private double max; //max of graph
     private GUIComponent gui = null;
     private Calculator calculator = null;
     private Driver driver = null;
     private Processor processor = new Processor();
     
     public void initDriver() {
-        robotY = new double[maxDataReadings];
-        xValues = new double[maxDataReadings];
-        canyonY = new double[maxDataReadings];
         gui = new GUIComponent();
         calculator = new Calculator();
     }
     
     public void setMaxDataReadings(int maxDataReadings) {
         this.maxDataReadings = maxDataReadings;
+    }
+    
+    public void setMinAndMax(double min, double max) {
+        this.min = min;
+        this.max = max;
     }
     
     public void setRobotY(double[] robotY) {
@@ -49,7 +53,7 @@ public class Driver {
     
     public void createChart() {
         // Create Chart
-        XYChart chart = gui.getChart(canyonY, robotY, maxDataReadings);
+        XYChart chart = gui.getChart(canyonY, robotY, xValues , maxDataReadings);
         // Show it
         final SwingWrapper<XYChart> sw = new SwingWrapper<XYChart>(chart);
         sw.displayChart();
@@ -58,9 +62,9 @@ public class Driver {
     public void run() {
         try {
                 //read in/process data
-            processor.processFile("DataFile.txt", this);
+            processor.processFile("C:\\Users\\e356227\\Desktop\\DataFile.txt", this);
             initDriver();
-
+            
                 //perform calculations
             //calculator.processData(0, 0, 0);
                 //plot data
@@ -127,6 +131,6 @@ public class Driver {
         
         Driver driver = new Driver();
         //test(gui);
-        driver.test2();
+        driver.run();
     }
 }
