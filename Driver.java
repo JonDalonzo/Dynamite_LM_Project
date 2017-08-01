@@ -1,7 +1,6 @@
 /*
  * Created by Jon D'Alonzo
  */
-package dynamite;
 
 import java.util.Random;
 import org.knowm.xchart.SwingWrapper;
