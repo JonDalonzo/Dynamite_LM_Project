@@ -11,35 +11,22 @@ package dynamite;
  */
 public class Calculator {
     
-    
+    final double ONE_TURN = 360;
+    final double CIRCUM = Math.PI * 6.4; //cm 
     
     
     public double[] findDistanceTravelled(double[] leftMotor, double[] rightMotor) {
         
         double[] distances = new double[leftMotor.length];
-        
+        //start at 0 because we want the distances travelled between the two points
         for (int i = 0; i < leftMotor.length; i++) {
            
-            if (leftMotor[i] == 0.00 && rightMotor[i] == 0.00) {
-                distances[i] = 0.00;
-            }
-            else if (leftMotor[i] == 0.00) {
-                distances[i] = rightMotor[i];
-            }
-            else if (rightMotor[i] == 0.00) {
-                distances[i] = leftMotor[i];
-            }
-            else {
-                double distance = leftMotor[i] / rightMotor[i];
-                if (distance < 0.00) {
-                    distances[i] = 0.00;
-                }
-                else {
-                    distances[i] = distance;
-                }
-            }
+            double leftDist = (leftMotor[i] / 360.0) * CIRCUM;
+            
+            double rightDist = (rightMotor[i] / 360.0) * CIRCUM;
+            
+            distances[i] = leftDist + rightDist;
         }
-        
         return distances;
     }
     
@@ -47,8 +34,8 @@ public class Calculator {
         
         double[] changeInY = new double[distance.length];
         changeInY[0] = startingY;
-        for (int i = 0; i < distance.length; i++) {
-            changeInY[i] = (distance[i] * Math.sin(theta[i]));
+        for (int i = 1; i < distance.length; i++) {
+            changeInY[i] = (distance[i] * Math.sin(Math.toRadians(theta[i])));
         }
         
         return changeInY;
@@ -59,7 +46,12 @@ public class Calculator {
         double[] changeInX = new double[distance.length];
         changeInX[0] = 0.00;
         for (int i = 1; i < distance.length; i++) {
-            changeInX[i] = (distance[i] * Math.cos(theta[i]));
+            if (distance[i] > 0.00) {
+                changeInX[i] = (distance[i] * Math.cos(Math.toRadians(theta[i])));
+            }
+            else {
+                changeInX[i] = changeInX[i-1];
+            }
         }
         
         return changeInX;
@@ -70,7 +62,7 @@ public class Calculator {
         double[] coordinates = new double[values.length];
         coordinates[0] = values[0];
         for (int i = 1; i < values.length; i++) {
-            coordinates[i] = values[i-1] + values[i];
+            coordinates[i] = coordinates[i-1] + values[i];
         }
         
         return coordinates;
@@ -82,12 +74,12 @@ public class Calculator {
      * @param sensorData
      * @return 
      */
-    public double[] calculateCanyonYData(double[] robotY, double[] sensorDist, int maxDataReadings) throws Exception {
+    public double[] calculateCanyonYData(double[] robotY, double[] sensorDist, int maxDataReadings) {
         
         double[] canyonYData = new double[robotY.length];
         
         if (robotY == null || sensorDist == null) {
-            throw new Exception();
+            return null;
         }
         else {
             for (int i = 0; i < maxDataReadings; i++) {
